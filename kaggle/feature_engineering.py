@@ -68,7 +68,6 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
-        X = X.drop('datetime', axis = 1)
         return X
 
 

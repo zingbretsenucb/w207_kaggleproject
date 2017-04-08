@@ -105,8 +105,8 @@ y_count = train_df[['count']]
 y_casual = train_df[['casual']]
 y_registered = train_df[['registered']]
 
-X_train, X_dev,y_count_train, y_count_dev,\
-y_casual_train, y_casual_dev,y_registered_train, y_registered_dev =\
+X_train, X_dev, y_count_train, y_count_dev,\
+y_casual_train, y_casual_dev, y_registered_train, y_registered_dev =\
 train_test_split(train_df, y_count, y_casual, y_registered, random_state=2)
 
 

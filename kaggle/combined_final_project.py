@@ -101,7 +101,15 @@ test_df = pd.read_csv('data/test.csv')
 targets = ['count', 'casual', 'registered']
 predictors = [c for c in train_df.columns if c not in targets]
 
+y_count = train_df[['count']]
+y_casual = train_df[['casual']]
+y_registered = train_df[['registered']]
 
+X_train, X_dev,\
+y_count_train, y_count_dev,\
+y_casual_train, y_casual_dev,\
+y_registered_train, y_registered_dev =\
+train_test_split(train_df, y_count, y_casual, y_registered, random_state=2)
 
 
 ##############################################
@@ -127,8 +135,61 @@ predictors = [c for c in train_df.columns if c not in targets]
 # Assumptions?
 # Regularization?
 
+##############################################
+# Define pipeline
+
+categorical = ('season', 'holiday', 'workingday', )
+# datetime isn't numerical, but needs to be in the numeric branch
+numerical = ('datetime', 'weather', 'temp', 'atemp', 'humidity', 'windspeed',)
+pipeline = Pipeline([
+    # process cat & num separately, then join back together
+    ('union', FeatureUnion([ 
+        ('categorical', Pipeline([
+            ('select_cat', fe.SelectCols(cols = categorical)),
+            ('onehot', OneHotEncoder()),    
+        ])),    
+        ('numerical', Pipeline([
+            ('select_num', fe.SelectCols(cols = numerical)),
+            ('date', fe.DateFormatter()),
+            ('drop_datetime', fe.SelectCols(cols = ('datetime'), invert = True)),
+            ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'))),
+            # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
+            # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
+            ('scale', StandardScaler()),    
+        ])),    
+    ])),
+    ('clf', RandomForestRegressor(n_estimators = 100)),
+])
+
+def gs(y_train):
+    grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
+    print("Performing grid search...")
+    print("pipeline:", [name for name, _ in pipeline.steps])
+    print("parameters:")
+    pprint(parameters)
+    t0 = time()
+    grid_search.fit(train_df[predictors].copy(), y_train)
+    print("done in %0.3fs" % (time() - t0))
+    print()
 
 
+    print("Best score: %0.3f" % grid_search.best_score_)
+    print("Best parameters set:")
+    best_parameters = grid_search.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+    return grid_search
+
+preds_count = gs(y_count).predict(test_df)
+preds_casual = gs(y_casual).predict(test_df)
+preds_registered = gs(y_registered).predict(test_df)
+
+test_df.set_index(pd.DatetimeIndex(test_df['datetime']), inplace=True)
+test_df['count'] = preds_count
+test_df[['count']].to_csv('data/zi_count_preds.csv')
+
+test_df['count'] = preds_casual + preds_registered
+test_df[['count']].to_csv('data/zi_combined_preds.csv')
 
 ##############################################
 ##############################################

@@ -136,6 +136,10 @@ train_test_split(train_df, y_count, y_casual, y_registered, random_state=2)
 ##############################################
 # Define pipeline
 
+parameters = {
+    'clf__n_estimators': (100,),
+}
+
 categorical = ('season', 'holiday', 'workingday', )
 # datetime isn't numerical, but needs to be in the numeric branch
 numerical = ('datetime', 'weather', 'temp', 'atemp', 'humidity', 'windspeed',)

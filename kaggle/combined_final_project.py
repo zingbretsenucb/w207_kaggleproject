@@ -90,7 +90,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
 
 # Custom classes for this assignment
-from kaggle import feature_engineering as fe
+import feature_engineering as fe
 
 
 ##############################################

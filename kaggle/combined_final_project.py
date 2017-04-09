@@ -155,16 +155,16 @@ def get_RMSE(actual_values, predicted_values):
 
 ##############################################
 # Split into Dev and Train data and find best parameters
-def train_dev_model_search(type,parameters):
+def train_dev_model_search(registered_or_casual,parameters):
     print "GridSearch "
     gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
-    gs.fit(train_data[features], train_data[type])
+    gs.fit(train_data[features], train_data[registered_or_casual])
     print("Best parameters set:")
     best_param = gs.best_estimator_.get_params()
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_param[param_name]))
     predicted_y = gs.predict(dev_data[features])
-    rmse = get_RMSE(actual_values = dev_data[type], predicted_values = predicted_y)
+    rmse = get_RMSE(actual_values = dev_data[registered_or_casual], predicted_values = predicted_y)
     print "RMSE: "
     print rmse
 

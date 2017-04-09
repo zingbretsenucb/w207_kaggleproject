@@ -121,8 +121,7 @@ test_df = pd.read_csv('data/test.csv')
 # Regularization?
 
 ##############################################
-# Define pipeline and gridsearch
-
+# Define pipeline
 categorical = ('season', 'holiday', 'workingday', )
 # datetime isn't numerical, but needs to be in the numeric branch
 numerical = ('datetime', 'weather', 'temp', 'atemp', 'humidity', 'windspeed',)

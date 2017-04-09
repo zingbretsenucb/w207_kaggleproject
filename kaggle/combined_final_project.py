@@ -91,9 +91,6 @@ from sklearn.preprocessing import OneHotEncoder
 
 # Custom classes for this assignment
 import feature_engineering as fe
-
-from sklearn.metrics import mean_absolute_error
-
 ##############################################
 # LOAD THE DATASETS
 train_df = pd.read_csv('data/train.csv')

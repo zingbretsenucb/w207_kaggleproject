@@ -179,7 +179,7 @@ parameters = {
     'clf__min_samples_leaf': (20,),
 }
 print "GridSearch for Casual rides"
-casual_gs = GridSearchCV(pipeline, parameters, n_jobs=4, verbose=1)
+casual_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
 casual_gs.fit(train_data[features], train_data['casual'])
 casual_best_param = casual_gs.best_estimator_.get_params()
 print "Best parameteres for casual " + casual_best_param
@@ -196,7 +196,7 @@ parameters = {
     'clf__min_samples_leaf': (20,),
 }
 print "GridSearch for Registered rides"
-registered_gs = GridSearchCV(pipeline, parameters, n_jobs=4, verbose=1)
+registered_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
 registered_gs.fit(train_data[features], train_data['registered'])
 registered_best_param = registered_gs.best_estimator_.get_params()
 print "Best parameteres for registered " + casual_best_param
@@ -221,11 +221,11 @@ registered_best_param = {
     'clf__min_samples_leaf': (20,),
 }
 
-full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=4, verbose=1)
+full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=1, verbose=1)
 full_casual_gs.fit(train_df[features], train_df['casual'])
 full_casual_predicted_y = full_casual_gs.predict(test_df[features])
 
-full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=4, verbose=1)
+full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, verbose=1)
 full_registered_gs.fit(train_df[features], train_df['registered'])
 full_registered_predicted_y = full_registered_gs.predict(test_df[features])
 

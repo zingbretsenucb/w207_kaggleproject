@@ -84,6 +84,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.pipeline import FeatureUnion
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 
 #SK-learn libraries for transformation and pre-processing
 from sklearn.preprocessing import StandardScaler

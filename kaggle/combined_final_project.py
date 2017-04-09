@@ -193,16 +193,16 @@ train_dev_model_search('registered',parameters)
 # Create full model using all train data
 
 casual_best_param = {
-    'clf__n_estimators': (50,),
+    'clf__n_estimators': (80,),
     'clf__learning_rate': (0.05,),
-    'clf__max_depth': (15,),
+    'clf__max_depth': (10,),
     'clf__min_samples_leaf': (20,),
 }
 
 registered_best_param = {
-    'clf__n_estimators': (75,),
-    'clf__learning_rate': (0.01,),
-    'clf__max_depth': (20,),
+    'clf__n_estimators': (80,),
+    'clf__learning_rate': (0.05,),
+    'clf__max_depth': (10,),
     'clf__min_samples_leaf': (20,),
 }
 

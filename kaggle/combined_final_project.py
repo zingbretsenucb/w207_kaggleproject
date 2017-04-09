@@ -159,6 +159,7 @@ def train_dev_model_search(registered_or_casual,parameters):
     print("Performing grid search...")
     t0 = time()
     gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
+    features = [c for c in train_df.columns if c not in ['count', 'casual', 'registered']]    
     gs.fit(train_data[features], train_data[registered_or_casual])
     print("Best parameters set:")
     best_param = gs.best_estimator_.get_params()

@@ -92,23 +92,12 @@ from sklearn.preprocessing import OneHotEncoder
 # Custom classes for this assignment
 import feature_engineering as fe
 
+from sklearn.metrics import mean_absolute_error
 
 ##############################################
 # LOAD THE DATASETS
 train_df = pd.read_csv('data/train.csv')
 test_df = pd.read_csv('data/test.csv')
-
-targets = ['count', 'casual', 'registered']
-predictors = [c for c in train_df.columns if c not in targets]
-
-y_count = train_df[['count']]
-y_casual = train_df[['casual']]
-y_registered = train_df[['registered']]
-
-X_train, X_dev, y_count_train, y_count_dev,\
-y_casual_train, y_casual_dev, y_registered_train, y_registered_dev =\
-train_test_split(train_df, y_count, y_casual, y_registered, random_state=2)
-
 
 ##############################################
 ##############################################
@@ -134,11 +123,7 @@ train_test_split(train_df, y_count, y_casual, y_registered, random_state=2)
 # Regularization?
 
 ##############################################
-# Define pipeline
-
-parameters = {
-    'clf__n_estimators': (100,),
-}
+# Define pipeline and gridsearch
 
 categorical = ('season', 'holiday', 'workingday', )
 # datetime isn't numerical, but needs to be in the numeric branch
@@ -160,38 +145,104 @@ pipeline = Pipeline([
             ('scale', StandardScaler()),    
         ])),    
     ])),
-    ('clf', RandomForestRegressor(n_estimators = 100)),
+    ('to_dense', preprocessing.FunctionTransformer(lambda x: x.todense(), accept_sparse=True)), 
+    ('clf', ensemble.GradientBoostingRegressor(n_estimators=100)),
 ])
 
-def gs(y_train):
-    grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
-    print("Performing grid search...")
-    print("pipeline:", [name for name, _ in pipeline.steps])
-    print("parameters:")
-    pprint(parameters)
-    t0 = time()
-    grid_search.fit(train_df[predictors].copy(), y_train)
-    print("done in %0.3fs" % (time() - t0))
-    print()
+#Helper function to calculate root mean squared error
+def get_RMSE(actual_values, predicted_values):
+    n = len(actual_values)
+    RMSE = np.sqrt(np.sum(((np.log(predicted_values + 1) - np.log(actual_values + 1)) ** 2) / n))
+    return RMSE
+
+##############################################
+# Parameters
+
+parameters = {
+    'clf__n_estimators': (50,75,100,),
+    'clf__learning_rate': (0.1, 0.05, 0.01,),
+    'clf__max_depth': (10, 15, 20,),
+    'clf__min_samples_leaf': (3, 5, 10, 20,),
+}
+
+features = ['season', 'holiday', 'workingday', 'weather',
+        'temp', 'atemp', 'humidity', 'windspeed', 'year',
+         'month', 'weekday', 'hour']
+
+##############################################
+# Split into Dev and Train data and find best parameters
+train_data = train_df[pd.DatetimeIndex(train_df['datetime']).day <= 16]
+dev_data = train_df[pd.DatetimeIndex(train_df['datetime']).day > 16]
 
 
-    print("Best score: %0.3f" % grid_search.best_score_)
-    print("Best parameters set:")
-    best_parameters = grid_search.best_estimator_.get_params()
-    for param_name in sorted(parameters.keys()):
-        print("\t%s: %r" % (param_name, best_parameters[param_name]))
-    return grid_search
+# I ran the full parameter list above and got these parameters. Tooks hours to run full list.
+parameters = {
+    'clf__n_estimators': (50,),
+    'clf__learning_rate': (0.05,),
+    'clf__max_depth': (15,),
+    'clf__min_samples_leaf': (20,),
+}
+print "GridSearch for Casual rides"
+casual_gs = GridSearchCV(pipeline, parameters, n_jobs=4, verbose=1)
+casual_gs.fit(train_data[features], train_data['casual'])
+casual_best_param = casual_gs.best_estimator_.get_params()
+print "Best parameteres for casual " + casual_best_param
+casual_predicted_y = casual_gs.predict(dev_data[features])
+casual_rmse = get_RMSE(actual_values = train_data['casual'], predicted_values = casual_predicted_y)
+print "Casual RMSE " + casual_rmse
 
-preds_count = gs(y_count).predict(test_df)
-preds_casual = gs(y_casual).predict(test_df)
-preds_registered = gs(y_registered).predict(test_df)
+
+# I ran the full parameter list above and got these parameters. Tooks hours to run full list.
+parameters = {
+    'clf__n_estimators': (75,),
+    'clf__learning_rate': (0.01,),
+    'clf__max_depth': (20,),
+    'clf__min_samples_leaf': (20,),
+}
+print "GridSearch for Registered rides"
+registered_gs = GridSearchCV(pipeline, parameters, n_jobs=4, verbose=1)
+registered_gs.fit(train_data[features], train_data['registered'])
+registered_best_param = registered_gs.best_estimator_.get_params()
+print "Best parameteres for registered " + casual_best_param
+registered_predicted_y = registered_gs.predict(dev_data[features])
+registered_rmse = get_RMSE(actual_values = train_data['registered'], predicted_values = registered_predicted_y)
+print "Registered RMSE " + casual_rmse
+
+##############################################
+# Create full model using all train data
+
+casual_best_param = {
+    'clf__n_estimators': (50,),
+    'clf__learning_rate': (0.05,),
+    'clf__max_depth': (15,),
+    'clf__min_samples_leaf': (20,),
+}
+
+registered_best_param = {
+    'clf__n_estimators': (75,),
+    'clf__learning_rate': (0.01,),
+    'clf__max_depth': (20,),
+    'clf__min_samples_leaf': (20,),
+}
+
+full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=4, verbose=1)
+full_casual_gs.fit(train_df[features], train_df['casual'])
+full_casual_predicted_y = full_casual_gs.predict(test_df[features])
+
+full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=4, verbose=1)
+full_registered_gs.fit(train_df[features], train_df['registered'])
+full_registered_predicted_y = full_registered_gs.predict(test_df[features])
+
+
+##############################################
+# Create CSV for submission
 
 test_df.set_index(pd.DatetimeIndex(test_df['datetime']), inplace=True)
-test_df['count'] = preds_count
-test_df[['count']].to_csv('data/zi_count_preds.csv')
+test_df['count'] = full_casual_predicted_y + full_registered_predicted_y
+test_df[['count']].to_csv('data/combined_preds.csv')
 
-test_df['count'] = preds_casual + preds_registered
-test_df[['count']].to_csv('data/zi_combined_preds.csv')
+# test_df['count'] = preds_count
+# test_df[['count']].to_csv('data/count_preds.csv')
 
 ##############################################
 ##############################################
@@ -216,6 +267,4 @@ test_df[['count']].to_csv('data/zi_combined_preds.csv')
 # serialized model?
 # regression coefficients?
 # What support is provided after initial deployment?
-
-
 

@@ -144,7 +144,7 @@ pipeline = Pipeline([
         ])),    
     ])),
     ('to_dense', preprocessing.FunctionTransformer(lambda x: x.todense(), accept_sparse=True)), 
-    ('clf', ensemble.GradientBoostingRegressor(n_estimators=100)),
+    ('clf', GradientBoostingRegressor(n_estimators=100)),
 ])
 
 #Helper function to calculate root mean squared error

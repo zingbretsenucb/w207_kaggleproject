@@ -156,7 +156,8 @@ def get_RMSE(actual_values, predicted_values):
 ##############################################
 # Split into Dev and Train data and find best parameters
 def train_dev_model_search(registered_or_casual,parameters):
-    print "GridSearch "
+    print("Performing grid search...")
+    t0 = time()
     gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
     gs.fit(train_data[features], train_data[registered_or_casual])
     print("Best parameters set:")
@@ -165,8 +166,9 @@ def train_dev_model_search(registered_or_casual,parameters):
         print("\t%s: %r" % (param_name, best_param[param_name]))
     predicted_y = gs.predict(dev_data[features])
     rmse = get_RMSE(actual_values = dev_data[registered_or_casual], predicted_values = predicted_y)
-    print "RMSE: "
-    print rmse
+    print "RMSE: ", str(rmse)
+    print("Done in %0.3fs" % (time() - t0))
+    print ""
 
 # Split the data into train data and a dev data based on day of the month.
 # This makes sense since the test data is days 19-30 of the month.
@@ -179,8 +181,12 @@ parameters = {
     'clf__learning_rate': (0.05,),
     'clf__max_depth': (10,),
     'clf__min_samples_leaf': (20,),
-}    
+}
+
+print "Casual rides"
 train_dev_model_search('casual',parameters)
+
+print "Registered rides"
 train_dev_model_search('registered',parameters)
 
 ##############################################

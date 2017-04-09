@@ -220,7 +220,7 @@ full_registered_predicted_y = full_registered_gs.predict(test_df[features])
 
 test_df.set_index(pd.DatetimeIndex(test_df['datetime']), inplace=True)
 test_df['count'] = full_casual_predicted_y + full_registered_predicted_y
-test_df[['count']].to_csv('data/combined_preds.csv')
+test_df[['count']].to_csv('combined_preds.csv')
 
 # test_df['count'] = preds_count
 # test_df[['count']].to_csv('data/count_preds.csv')

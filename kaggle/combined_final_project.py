@@ -154,57 +154,34 @@ def get_RMSE(actual_values, predicted_values):
     return RMSE
 
 ##############################################
-# Parameters
-
-parameters = {
-    'clf__n_estimators': (50,75,100,),
-    'clf__learning_rate': (0.1, 0.05, 0.01,),
-    'clf__max_depth': (10, 15, 20,),
-    'clf__min_samples_leaf': (3, 5, 10, 20,),
-}
-
-features = [c for c in train_df.columns if c not in ['count', 'casual', 'registered']]
-
-##############################################
 # Split into Dev and Train data and find best parameters
+def train_dev_model_search(type,parameters):
+    print "GridSearch "
+    gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
+    gs.fit(train_data[features], train_data[type])
+    print("Best parameters set:")
+    best_param = gs.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_param[param_name]))
+    predicted_y = gs.predict(dev_data[features])
+    rmse = get_RMSE(actual_values = dev_data[type], predicted_values = predicted_y)
+    print "RMSE: "
+    print rmse
+
+# Split the data into train data and a dev data based on day of the month.
+# This makes sense since the test data is days 19-30 of the month.
 train_data = train_df[pd.DatetimeIndex(train_df['datetime']).day <= 16]
 dev_data = train_df[pd.DatetimeIndex(train_df['datetime']).day > 16]
-
-
-# I ran the full parameter list above and got these parameters. Tooks hours to run full list.
+	
+# Test for casual and registered separately
 parameters = {
-    'clf__n_estimators': (50,),
+    'clf__n_estimators': (80,),
     'clf__learning_rate': (0.05,),
-    'clf__max_depth': (15,),
+    'clf__max_depth': (10,),
     'clf__min_samples_leaf': (20,),
-}
-print "GridSearch for Casual rides"
-casual_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
-casual_gs.fit(train_data[features], train_data['casual'])
-casual_best_param = casual_gs.best_estimator_.get_params()
-print "Best parameteres for casual: "
-print casual_best_param
-casual_predicted_y = casual_gs.predict(dev_data[features])
-casual_rmse = get_RMSE(actual_values = train_data['casual'], predicted_values = casual_predicted_y)
-print "Casual RMSE " + casual_rmse
-
-
-# I ran the full parameter list above and got these parameters. Tooks hours to run full list.
-parameters = {
-    'clf__n_estimators': (75,),
-    'clf__learning_rate': (0.01,),
-    'clf__max_depth': (20,),
-    'clf__min_samples_leaf': (20,),
-}
-print "GridSearch for Registered rides"
-registered_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
-registered_gs.fit(train_data[features], train_data['registered'])
-registered_best_param = registered_gs.best_estimator_.get_params()
-print "Best parameteres for registered: " 
-print casual_best_param
-registered_predicted_y = registered_gs.predict(dev_data[features])
-registered_rmse = get_RMSE(actual_values = train_data['registered'], predicted_values = registered_predicted_y)
-print "Registered RMSE " + casual_rmse
+}    
+train_dev_model_search('casual',parameters)
+train_dev_model_search('registered',parameters)
 
 ##############################################
 # Create full model using all train data

@@ -163,9 +163,7 @@ parameters = {
     'clf__min_samples_leaf': (3, 5, 10, 20,),
 }
 
-features = ['season', 'holiday', 'workingday', 'weather',
-        'temp', 'atemp', 'humidity', 'windspeed', 'year',
-         'month', 'weekday', 'hour']
+features = [c for c in train_df.columns if c not in ['count', 'casual', 'registered']]
 
 ##############################################
 # Split into Dev and Train data and find best parameters

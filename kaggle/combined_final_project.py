@@ -207,11 +207,11 @@ registered_best_param = {
     'clf__min_samples_leaf': (20,),
 }
 
-full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=1, verbose=1)
+full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=1, verbose=1, scoring='neg_mean_squared_error')
 full_casual_gs.fit(train_df[features], train_df['casual'])
 full_casual_predicted_y = full_casual_gs.predict(test_df[features])
 
-full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, verbose=1)
+full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, verbose=1, scoring='neg_mean_squared_error')
 full_registered_gs.fit(train_df[features], train_df['registered'])
 full_registered_predicted_y = full_registered_gs.predict(test_df[features])
 

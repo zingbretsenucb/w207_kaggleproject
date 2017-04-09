@@ -182,7 +182,8 @@ print "GridSearch for Casual rides"
 casual_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
 casual_gs.fit(train_data[features], train_data['casual'])
 casual_best_param = casual_gs.best_estimator_.get_params()
-print "Best parameteres for casual " + casual_best_param
+print "Best parameteres for casual: "
+print casual_best_param
 casual_predicted_y = casual_gs.predict(dev_data[features])
 casual_rmse = get_RMSE(actual_values = train_data['casual'], predicted_values = casual_predicted_y)
 print "Casual RMSE " + casual_rmse
@@ -199,7 +200,8 @@ print "GridSearch for Registered rides"
 registered_gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
 registered_gs.fit(train_data[features], train_data['registered'])
 registered_best_param = registered_gs.best_estimator_.get_params()
-print "Best parameteres for registered " + casual_best_param
+print "Best parameteres for registered: " 
+print casual_best_param
 registered_predicted_y = registered_gs.predict(dev_data[features])
 registered_rmse = get_RMSE(actual_values = train_data['registered'], predicted_values = registered_predicted_y)
 print "Registered RMSE " + casual_rmse

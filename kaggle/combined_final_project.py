@@ -215,7 +215,6 @@ full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, ver
 full_registered_gs.fit(train_df[features], train_df['registered'])
 full_registered_predicted_y = full_registered_gs.predict(test_df[features])
 
-
 ##############################################
 # Create CSV for submission
 

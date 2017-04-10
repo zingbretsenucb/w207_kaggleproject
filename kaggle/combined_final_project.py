@@ -90,6 +90,7 @@ from sklearn import preprocessing
 #SK-learn libraries for transformation and pre-processing
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics import make_scorer
 
 # Custom classes for this assignment
 import feature_engineering as fe
@@ -153,13 +154,16 @@ def get_RMSE(actual_values, predicted_values):
     RMSE = np.sqrt(np.sum(((np.log(predicted_values + 1) - np.log(actual_values + 1)) ** 2) / n))
     return RMSE
 
+#create custom scorer
+RMSE_scorer = make_scorer(get_RMSE, greater_is_better = False)
+
 ##############################################
 # Split into Dev and Train data and find best parameters
 features = [c for c in train_df.columns if c not in ['count', 'casual', 'registered']]    
 def train_dev_model_search(registered_or_casual,parameters):
     print("Performing grid search...")
     t0 = time()
-    gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1, scoring='neg_mean_squared_error')
+    gs = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1, scoring=RMSE_scorer)
     gs.fit(train_data[features], train_data[registered_or_casual])
     print("Best parameters set:")
     best_param = gs.best_estimator_.get_params()

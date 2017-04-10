@@ -170,6 +170,7 @@ def train_dev_model_search(registered_or_casual,parameters):
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_param[param_name]))
     predicted_y = gs.predict(dev_data[features])
+    print "GridSearch RMSE " + str(gs.best_score_)
     rmse = get_RMSE(actual_values = dev_data[registered_or_casual], predicted_values = predicted_y)
     print "RMSE: ", str(rmse)
     print("Done in %0.3fs" % (time() - t0))

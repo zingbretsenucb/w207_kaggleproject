@@ -123,6 +123,10 @@ test_df = pd.read_csv('data/test.csv')
 # Regularization?
 
 ##############################################
+# Base model before feature engineering
+
+
+##############################################
 # Define pipeline
 categorical = ('season', 'holiday', 'workingday', )
 # datetime isn't numerical, but needs to be in the numeric branch

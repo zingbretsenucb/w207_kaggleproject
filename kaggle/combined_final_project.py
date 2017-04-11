@@ -94,7 +94,7 @@ from sklearn.metrics import make_scorer
 
 # Custom classes for this assignment
 import feature_engineering as fe
-import paramTuning_GradientBoost as ptgb
+import paramTuning_gradientBoost as ptgb
 ##############################################
 # LOAD THE DATASETS
 train_df = pd.read_csv('data/train.csv')

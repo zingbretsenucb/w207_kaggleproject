@@ -243,16 +243,3 @@ test_df[['count']].to_csv('combined_preds.csv')
 # other metrics? performance?
 # AB test results (if any)
 
-
-
-
-##############################################
-##############################################
-##############################################
-# DEPLOYMENT
-# How is the model deployed?
-# prediction service?
-# serialized model?
-# regression coefficients?
-# What support is provided after initial deployment?
-

@@ -201,23 +201,6 @@ print "Registered rides"
 train_dev_model_search('registered',parameters)
 
 ##############################################
-# Further parameter tuning
-n_estimators=[70,75,80,85,90,95,100,105,110,115,120,125,130,135,140]
-learning_rate=[.01,.02,.03,.04,.045,.05,.055,.06,.07,.08,.09,.1,.2,.3,.4]
-max_depth=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-min_samples_leaf=[1,5,10,15,20,25,30,35]
-
-ptgb.tune_nEstimators('casual',n_estimators)
-ptgb.tune_learningRate('casual',learning_rate)
-ptgb.tune_maxDepth('casual',max_depth)
-ptgb.tune_minSamplesLeaf('casual',min_samples_leaf)
-
-ptgb.tune_nEstimators('registered',n_estimators)
-ptgb.tune_learningRate('registered',learning_rate)
-ptgb.tune_maxDepth('registered',max_depth)
-ptgb.tune_minSamplesLeaf('registered',min_samples_leaf)
-
-##############################################
 # Create full model using all train data
 
 casual_best_param = {

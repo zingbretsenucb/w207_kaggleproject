@@ -56,7 +56,7 @@ class DateFormatter(PipelineEstimator):
 
     def transform(self, X, y = None):
         """Split the datetime into its component parts."""
-        # Change the index to datetime
+        #Change the index to datetime
         X.set_index(pd.DatetimeIndex(X['datetime']), inplace=True)
         # Create new day and time related features
         X['date'] = pd.DatetimeIndex(X['datetime']).strftime("%Y%m%d")
@@ -68,8 +68,45 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
+        
+
+        ################
+        # Trying to change hours into dummies just makes worse soltion
+        #################
+        #hours = pd.get_dummies(X['hour'], prefix='hour_dummy')
+        #X = pd.concat([X, hours], axis=1)
+        #print X.head()
         return X
 
+class BinCols(PipelineEstimator):
+	"""Create Bin variables"""
+	
+	def __init__(self):
+		pass
+
+	def transform(self, X, y = None):
+		"""Transform into bins"""
+		def hourbins(hour):
+			hour = int(hour)
+			result = 0
+			if hour < 8:
+				result = 1
+			if hour >= 22:
+				result = 2
+			if hour > 9 & hour<18:
+				result = 3
+			if hour == 8:
+				result = 4
+			if hour == 9:
+				result = 5
+			if hour == 20 | hour==21:
+				result = 6
+			if hour == 19 | hour==18:
+				result = 7
+			return result
+		X['hourbin'] = X['hour'].apply(hourbins)
+		X.drop('hour', 1)
+		return X
 
 
 class SelectCols(PipelineEstimator):

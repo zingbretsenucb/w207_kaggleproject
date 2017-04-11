@@ -97,6 +97,10 @@ import feature_engineering as fe
 train_df = pd.read_csv('../../data/train.csv')
 test_df = pd.read_csv('../../data/test.csv')
 
+train_df['casual'] = np.log(train_df['casual']+1)
+print train_df.head()
+
+train_df['registered'] = np.log(train_df['registered']+1)
 ##############################################
 ##############################################
 ##############################################
@@ -125,6 +129,12 @@ test_df = pd.read_csv('../../data/test.csv')
 
 
 ##############################################
+
+######
+## CREATE LOG VALUES
+#######
+
+
 # Define pipeline
 categorical = ('season', 'holiday', 'workingday', )
 # datetime isn't numerical, but needs to be in the numeric branch
@@ -141,9 +151,10 @@ pipeline = Pipeline([
             ('date', fe.DateFormatter()),
             ('drop_datetime', fe.SelectCols(cols = ('datetime'), invert = True)),
             ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'))),
+            ('hourbins', fe.BinCols()),
             # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
             # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
-            ('scale', StandardScaler()),    
+            ('scale', StandardScaler()),
         ])),    
     ])),
     ('to_dense', preprocessing.FunctionTransformer(lambda x: x.todense(), accept_sparse=True)), 
@@ -216,11 +227,11 @@ registered_best_param = {
 
 full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=1, verbose=1, scoring='neg_mean_squared_error')
 full_casual_gs.fit(train_df[features], train_df['casual'])
-full_casual_predicted_y = full_casual_gs.predict(test_df[features])
+full_casual_predicted_y = np.exp(full_casual_gs.predict(test_df[features]))-1
 
 full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, verbose=1, scoring='neg_mean_squared_error')
 full_registered_gs.fit(train_df[features], train_df['registered'])
-full_registered_predicted_y = full_registered_gs.predict(test_df[features])
+full_registered_predicted_y = np.exp(full_registered_gs.predict(test_df[features]))-1
 
 ##############################################
 # Create CSV for submission

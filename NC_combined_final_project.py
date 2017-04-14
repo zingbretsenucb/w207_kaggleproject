@@ -93,11 +93,15 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import make_scorer
 
 # Custom classes for this assignment
+import os
 import sys
 sys.path.insert(0, '/kaggle/')
-import feature_engineering as fe
+import feature_engineering_NC as fe
 ##############################################
 # LOAD THE DATASETS
+os.getcwd()
+os.chdir('/Users/nwchen24/Desktop/UC_Berkeley/machine_learning/final_project_github_repo/w207_kaggleproject/')
+os.getcwd()
 train_df = pd.read_csv('data/train.csv')
 test_df = pd.read_csv('data/test.csv')
 

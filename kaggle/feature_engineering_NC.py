@@ -22,10 +22,12 @@ class PipelineEstimator(BaseEstimator, TransformerMixin):
 
 class ProcessNumerical(PipelineEstimator):
 
-    def __init__(self, cols_to_square = (), cols_to_log = ()):
+    def __init__(self, cols_to_square = (), cols_to_log = (), cols_to_exp = (), exp = 0.5):
         self.cols_to_square = cols_to_square
         self.cols_to_log = cols_to_log
-
+        self.cols_to_exp = cols_to_exp
+        self.exp = exp
+        
 
     def square(self, X):
         for col in self.cols_to_square:
@@ -38,6 +40,10 @@ class ProcessNumerical(PipelineEstimator):
             X[col + '_log'] = np.log(X[col])
         return X
 
+    def exp(self, X):
+        for col in self.cols_to_exp:
+            X[col + '_exp'] = X[col] ** self.exp
+        return X
 
     def transform(self, X, y = None):
         """Square or log given numerical columns"""

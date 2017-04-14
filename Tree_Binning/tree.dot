@@ -1,4 +1,0 @@
-digraph Tree {
-node [shape=box] ;
-0 [label="mse = 0.0\nsamples = 1\nvalue = [[16.0]\n[40.0]\n[32.0]\n..., \n[168.0]\n[129.0]\n[88.0]]"] ;
-}

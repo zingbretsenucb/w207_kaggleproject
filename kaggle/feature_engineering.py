@@ -19,6 +19,21 @@ class PipelineEstimator(BaseEstimator, TransformerMixin):
     def transform(self, X, y = None):
         return X
 
+class Duplicate(PipelineEstimator):
+    def __init__(self, cols, suffix = "_2"):
+        self.cols = cols
+        self.suffix = suffix
+        
+    def transform(self, X, y = None):
+        for col in self.cols:
+            X[col + self.suffix] = X[col]
+        return X
+
+class Square(PipelineEstimator):
+    def transform(self, X):
+        return np.square(X)
+    
+
 
 class ProcessNumerical(PipelineEstimator):
 

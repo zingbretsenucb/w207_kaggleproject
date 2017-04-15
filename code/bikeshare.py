@@ -26,8 +26,34 @@ def eda_transform(df):
     df['atempsq'] = df['atemp']**2
     df['tempsq'] = df['temp']**2
     df['year_month']=df['year'].astype(str) + df['month'].astype(str)
-return df
+    return df
 
+# Create boxplots for registered/casual rides by hour
+def boxplot_by_hour(df):
+    plt.figure(figsize=(15, 5))
+    ax1 = plt.subplot(1,2,1)
+    ax2 = plt.subplot(1,2,2)
+    df.boxplot(column='registered',by='hour',ax=ax1)
+    df.boxplot(column='casual',by='hour',ax=ax2)
+    ax1.set_ylabel('rides')
+    ax2.set_ylabel('rides')
+    ax1.set_ylim(-10,800)
+    ax2.set_ylim(-10,800)
+    plt.show()
+
+# Create boxplots for registered/casual rides throughout time
+def boxplot_by_yearmonth(df):
+    plt.figure(figsize=(15, 10))
+    ax1 = plt.subplot(2,1,1)
+    ax2 = plt.subplot(2,1,2)
+    df.boxplot(column='registered',by='year_month',ax=ax1)
+    df.boxplot(column='casual',by='year_month',ax=ax2)
+    ax1.set_ylabel('rides')
+    ax2.set_ylabel('rides')
+    ax1.set_ylim(-10,800)
+    ax2.set_ylim(-10,800)
+    plt.show()
+    
 def train_dev_model_search(registered_or_casual,parameters, pipeline, RMSE_scorer):
     print("Performing grid search...")
     t0 = time()

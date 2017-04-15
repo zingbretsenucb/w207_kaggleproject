@@ -80,6 +80,7 @@ class DateFormatter(PipelineEstimator):
         X['quarter'] = X.index.quarter
         X['year'] = X.index.year
         X['dom'] = X.index.day
+        X['weekend'] = np.where(X['weekday']>5, 1, 0)
 
         return X
 

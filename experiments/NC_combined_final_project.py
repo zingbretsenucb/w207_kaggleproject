@@ -223,15 +223,14 @@ registered_best_param = {
 }
 
 #Note, NC took model here out of pipeline
-#full_casual_gs = GridSearchCV(pipeline, casual_best_param, n_jobs=1, verbose=1, scoring=RMSE_scorer)
-full_casual_gs = pipeline
-full_casual_gs.fit(train_df[features], train_df['casual'], clf__n_estimators = 80)
+# [THIS LINE WORKS TO SET PARAMETERS]full_casual_gs = pipeline.set_params(clf__n_estimators = 80)
+full_casual_gs = pipeline.set_params(clf__n_estimators = 80, clf__learning_rate = 0.05, clf__max_depth = 10, clf__min_samples_leaf = 20)
+full_casual_gs.fit(train_df[features], train_df['casual'])
 full_casual_predicted_y = full_casual_gs.predict(test_df[features])
 
-full_registered_gs = GridSearchCV(pipeline, registered_best_param, n_jobs=1, verbose=1, scoring=RMSE_scorer)
+full_registered_gs = pipeline.set_params(clf__n_estimators = 80, clf__learning_rate = 0.05, clf__max_depth = 10, clf__min_samples_leaf = 20)
 full_registered_gs.fit(train_df[features], train_df['registered'])
 full_registered_predicted_y = full_registered_gs.predict(test_df[features])
-full_registered_gs.score(train_df[features], train_df['registered'])
 
 
 ##############################################

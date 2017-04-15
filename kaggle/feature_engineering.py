@@ -83,6 +83,10 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
+        
+        #convert hour to numerical for binning
+        X['hour'] = X['hour'].astype('int64')
+        
         return X
 
 

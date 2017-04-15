@@ -102,12 +102,12 @@ class BinSeparator(PipelineEstimator):
         self.bin_labels = bin_labels
         
     def transform(self, X, y = None):
-        
-        
+        return X
+
 
 class BinarySplitter(PipelineEstimator):
     """Binarize a feature and add that as a new feature"""
-
+    
     def __init__(self, col, threshold, new_name = None):
         """Split col based on threshold"""
         self.col = col

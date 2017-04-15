@@ -19,15 +19,28 @@ class PipelineEstimator(BaseEstimator, TransformerMixin):
     def transform(self, X, y = None):
         return X
 
+class Duplicate(PipelineEstimator):
+    def __init__(self, cols, suffix = "_2"):
+        self.cols = cols
+        self.suffix = suffix
+        
+    def transform(self, X, y = None):
+        for col in self.cols:
+            X[col + self.suffix] = X[col]
+        return X
+
+class Square(PipelineEstimator):
+    def transform(self, X):
+        return np.square(X)
+    
+
 
 class ProcessNumerical(PipelineEstimator):
 
-    def __init__(self, cols_to_square = (), cols_to_log = (), cols_to_exp = (), exp = 0.5):
+    def __init__(self, cols_to_square = (), cols_to_log = ()):
         self.cols_to_square = cols_to_square
         self.cols_to_log = cols_to_log
-        self.cols_to_exp = cols_to_exp
-        self.exp = exp
-        
+
 
     def square(self, X):
         for col in self.cols_to_square:
@@ -40,10 +53,6 @@ class ProcessNumerical(PipelineEstimator):
             X[col + '_log'] = np.log(X[col])
         return X
 
-    def exp(self, X):
-        for col in self.cols_to_exp:
-            X[col + '_exp'] = X[col] ** self.exp
-        return X
 
     def transform(self, X, y = None):
         """Square or log given numerical columns"""
@@ -74,7 +83,6 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
-        X['TEST'] = X['hour'].astype('int64')
         return X
 
 
@@ -93,17 +101,6 @@ class SelectCols(PipelineEstimator):
             mask = np.invert(mask)
         return X.loc[:, mask]
 
-class BinSeparator(PipelineEstimator):
-    """Separate specified column into bins and return a new column whose values are these bins"""
-    
-    def __init__(self, cols = (), bin_edges = (), bin_labels = ()):
-        self.cols = cols
-        self.bin_edges = bin_edges
-        self.bin_labels = bin_labels
-        
-    def transform(self, X, y = None):
-        
-        
 
 class BinarySplitter(PipelineEstimator):
     """Binarize a feature and add that as a new feature"""

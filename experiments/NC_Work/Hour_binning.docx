@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+import feature_engineering_NC as fe
+import pandas as pd
+
+
+#create a copy of the train data
+train_df_test = train_df.copy()
+
+#create date formatter object
+df = fe.DateFormatter()
+
+#get hour variable
+train_df_test = df.transform(train_df_test)
+
+#instantiate new column based on hour variable
+train_df_test['hour_bin'] = 
+
+#create list of bin borders
+bin_borders = [6.5, 7.5, 8.5, 16.5, 18.5]
+
+for edge in bin_borders:
+

@@ -71,18 +71,6 @@ class DateFormatter(PipelineEstimator):
 
     def transform(self, X, y = None):
         """Split the datetime into its component parts."""
-        # Change the index to datetime
-        # X.set_index(pd.DatetimeIndex(X['datetime']), inplace=True)
-        # # Create new day and time related features
-        # X['date'] = pd.DatetimeIndex(X['datetime']).strftime("%Y%m%d")
-        # X['day'] = pd.DatetimeIndex(X['datetime']).strftime("%j")
-        # X['month1'] = pd.DatetimeIndex(X['datetime']).strftime("%m")
-        # # X['month2'] = pd.DatetimeIndex(X['datetime']).strftime("%B")
-        # X['year'] = pd.DatetimeIndex(X['datetime']).strftime("%Y")
-        # X['hour'] = pd.DatetimeIndex(X['datetime']).strftime("%H")
-        # X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
-        # # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
-        # X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
 
         X['hour'] = X.index.hour
         #X['weekday name'] = X.index.weekday_name
@@ -91,12 +79,9 @@ class DateFormatter(PipelineEstimator):
         X['month'] = X.index.month
         X['quarter'] = X.index.quarter
         X['year'] = X.index.year
-        X['month'] = X.index.month
         X['dom'] = X.index.day
 
         return X
-
-
 
 class SelectCols(PipelineEstimator):
     """Return only specified columnss"""

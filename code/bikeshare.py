@@ -3,13 +3,10 @@
 
 ### Place to hide functions referenced in notebook ###
 
-
 from time import time
-
 from sklearn.model_selection import GridSearchCV
-
 from sklearn.metrics import make_scorer
-
+import matplotlib.pyplot as plt
 
 
 # Define some time based variables

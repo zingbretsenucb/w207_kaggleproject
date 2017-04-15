@@ -22,9 +22,11 @@ def eda_transform(df):
     df['quarter'] = df.index.quarter
     df['year'] = df.index.year
     df['month'] = df.index.month
+    df['year_month'] = df.index.month
     df['atempsq'] = df['atemp']**2
     df['tempsq'] = df['temp']**2
-    return df
+    df['year_month']=df['year'].astype(str) + df['month'].astype(str)
+return df
 
 def train_dev_model_search(registered_or_casual,parameters, pipeline, RMSE_scorer):
     print("Performing grid search...")

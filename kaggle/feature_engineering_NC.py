@@ -74,7 +74,7 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
-        X['hour'] = X['hour'].astype('int64')
+        #X['hour'] = X['hour'].astype('int64')
         return X
 
 
@@ -102,9 +102,9 @@ class BinSeparator(PipelineEstimator):
         self.bin_labels = bin_labels
         
     def transform(self, X, y = None):
+        X[self.col] = X[self.col].astype('int64')
         X[self.col + '_bin'] = pd.cut(X[self.col], bins = self.bin_edges, labels = self.bin_labels)
         return X
-        
         
 
 class BinarySplitter(PipelineEstimator):

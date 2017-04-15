@@ -18,11 +18,11 @@ def eda_transform(df):
     df['month'] = df.index.month
     df['quarter'] = df.index.quarter
     df['year'] = df.index.year
-    df['month'] = df.index.month
-    df['year_month'] = df.index.month
     df['atempsq'] = df['atemp']**2
     df['tempsq'] = df['temp']**2
-    df['year_month']=df['year'].astype(str) + df['month'].astype(str)
+    temp_df = df
+    temp_df['temp'] = ('0' + df['month'].astype(str))
+    df['year_month']=df.year.astype(str) + temp_df.temp.str[-2:]
     return df
 
 # Create boxplots for registered/casual rides by hour
@@ -34,17 +34,19 @@ def boxplot_by_hour(df):
     df.boxplot(column='casual',by='hour',ax=ax2)
     ax1.set_ylabel('rides')
     ax2.set_ylabel('rides')
-    ax1.set_ylim(-10,800)
-    ax2.set_ylim(-10,800)
+    ax1.set_ylim(-10,900)
+    ax2.set_ylim(-10,900)
     plt.show()
 
 # Create boxplots for registered/casual rides throughout time
 def boxplot_by_yearmonth(df):
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(15, 15))
     ax1 = plt.subplot(2,1,1)
     ax2 = plt.subplot(2,1,2)
     df.boxplot(column='registered',by='year_month',ax=ax1)
     df.boxplot(column='casual',by='year_month',ax=ax2)
+    ax1.set_xticklabels(ax1.xaxis.get_majorticklabels(),rotation=35)
+    ax2.set_xticklabels(ax2.xaxis.get_majorticklabels(),rotation=35)
     ax1.set_ylabel('rides')
     ax2.set_ylabel('rides')
     ax1.set_ylim(-10,800)

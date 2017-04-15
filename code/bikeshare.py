@@ -35,22 +35,22 @@ def boxplot_by_hour(df):
     ax1.set_ylabel('rides')
     ax2.set_ylabel('rides')
     ax1.set_ylim(-10,900)
-    ax2.set_ylim(-10,900)
+    ax2.set_ylim(-10,250)
     plt.show()
 
 # Create boxplots for registered/casual rides throughout time
 def boxplot_by_yearmonth(df):
-    plt.figure(figsize=(15, 15))
-    ax1 = plt.subplot(2,1,1)
-    ax2 = plt.subplot(2,1,2)
+    plt.figure(figsize=(15, 5))
+    ax1 = plt.subplot(1,2,1)
+    ax2 = plt.subplot(1,2,2)
     df.boxplot(column='registered',by='year_month',ax=ax1)
     df.boxplot(column='casual',by='year_month',ax=ax2)
-    ax1.set_xticklabels(ax1.xaxis.get_majorticklabels(),rotation=35)
-    ax2.set_xticklabels(ax2.xaxis.get_majorticklabels(),rotation=35)
+    ax1.set_xticklabels(ax1.xaxis.get_majorticklabels(),rotation=90)
+    ax2.set_xticklabels(ax2.xaxis.get_majorticklabels(),rotation=90)
     ax1.set_ylabel('rides')
     ax2.set_ylabel('rides')
     ax1.set_ylim(-10,800)
-    ax2.set_ylim(-10,800)
+    ax2.set_ylim(-10,250)
     plt.show()
     
 def train_dev_model_search(registered_or_casual,parameters, pipeline, RMSE_scorer):

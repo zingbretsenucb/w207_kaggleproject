@@ -74,7 +74,7 @@ class DateFormatter(PipelineEstimator):
         X['dow1'] = pd.DatetimeIndex(X['datetime']).strftime("%w")
         # X['dow2'] = pd.DatetimeIndex(X['datetime']).strftime("%A")
         X['woy'] = pd.DatetimeIndex(X['datetime']).strftime("%W")
-        X['TEST'] = X['hour'].astype('int64')
+        X['hour'] = X['hour'].astype('int64')
         return X
 
 
@@ -96,12 +96,14 @@ class SelectCols(PipelineEstimator):
 class BinSeparator(PipelineEstimator):
     """Separate specified column into bins and return a new column whose values are these bins"""
     
-    def __init__(self, cols = (), bin_edges = (), bin_labels = ()):
-        self.cols = cols
+    def __init__(self, col = (), bin_edges = (), bin_labels = ()):
+        self.col = col
         self.bin_edges = bin_edges
         self.bin_labels = bin_labels
         
     def transform(self, X, y = None):
+        X[self.col + '_bin'] = pd.cut(X[self.col], bins = self.bin_edges, labels = self.bin_labels)
+        return X
         
         
 

@@ -102,6 +102,19 @@ class SelectCols(PipelineEstimator):
         return X.loc[:, mask]
 
 
+class BinSeparator(PipelineEstimator):
+    """Separate specified column into bins and return a new column whose values are these bins"""
+    
+    def __init__(self, col = (), bin_edges = (), bin_labels = ()):
+        self.col = col
+        self.bin_edges = bin_edges
+        self.bin_labels = bin_labels
+        
+    def transform(self, X, y = None):
+        X[self.col + '_bin'] = pd.cut(X[self.col], bins = self.bin_edges, labels = self.bin_labels)
+        return X
+ 
+
 class BinarySplitter(PipelineEstimator):
     """Binarize a feature and add that as a new feature"""
 

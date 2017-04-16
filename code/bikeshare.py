@@ -150,6 +150,45 @@ def param_tuning_graphs(train_data,dev_data,train_label,pipeline,parameter,param
                                 "Runtime:", round((time() - t0),3))
     plt.plot(param_values,rmse_list)
     plt.show()
+    return rmse_list
+
+def praram_tuning_graphs_abbrev(parameter):
+    #These lists are the resulting RMSEs from the parameter tuning grid searches above. We have saved permanent lists to avoid needing to run through a length grid search to produce the desired parameter tuning graphs.
+    param_tuning_rmse_list_n_estimators = [0.216,0.216,0.216,0.215,0.215,0.215,0.215,0.215,0.216,0.216,0.216,0.216,0.216,0.216,0.216]
+    param_tuning_rmse_list_learning_rate = [0.286, 0.228, 0.216, 0.214, 0.215, 0.216, 0.217, 0.219, 0.217, 0.219, 0.218, 0.217, 0.223, 0.23, 0.232]
+    param_tuning_rmse_list_max_depth = [0.299,0.252,0.231,0.22,0.214,0.213,0.212,0.213,0.214,0.216,0.216,0.217,0.217,0.217,0.216,0.218,0.218,0.219,0.217,0.217]
+    param_tuning_rmse_list_min_samples_leaf = [0.228, 0.224, 0.219, 0.215, 0.216, 0.214, 0.214, 0.214]
+
+    
+    if parameter == 'n_estimators':
+        param_values=[70,75,80,85,90,95,100,105,110,115,120,125,130,135,140]
+        plt.plot(param_values, param_tuning_rmse_list_n_estimators)
+        plt.title('RMSE vs. n_estimators')
+        plt.xlabel('n_estimators')
+        plt.ylabel('RMSE')
+        plt.show()    
+    if parameter == 'learning_rate':
+        param_values=[.01,.02,.03,.04,.045,.05,.055,.06,.07,.08,.09,.1,.2,.3,.4]
+        plt.plot(param_values, param_tuning_rmse_list_learning_rate)
+        plt.title('RMSE vs. learning_rate')
+        plt.xlabel('learning_rate')
+        plt.ylabel('RMSE')
+        plt.show()
+    if parameter == 'max_depth': 
+        param_values=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+        plt.plot(param_values, param_tuning_rmse_list_max_depth)
+        plt.title('RMSE vs. max_depth')
+        plt.xlabel('max_depth')
+        plt.ylabel('RMSE')
+        plt.show()
+    if parameter == 'min_samples_leaf': 
+        param_values=[1,5,10,15,20,25,30,35]
+        plt.plot(param_values, param_tuning_rmse_list_min_samples_leaf)
+        plt.title('RMSE vs. min_samples_leaf')
+        plt.xlabel('min_samples_leaf')
+        plt.ylabel('RMSE')
+        plt.show() 
+    
 
     
 def train_dev_model_search(pipeline, train_data, dev_data, train_label, parameters, RMSE_scorer):

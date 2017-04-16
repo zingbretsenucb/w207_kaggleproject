@@ -17,16 +17,6 @@ from sklearn.ensemble import GradientBoostingRegressor
 import feature_engineering as fe
 
 
-# Load Kaggle train and test datasets
-def load_data():
-    train_df = pd.read_csv('data/train.csv', index_col=0, infer_datetime_format=True)
-    train_df.index.name=None # Remove index name to remove confusing datetime column
-    train_df.index = pd.to_datetime(train_df.index) # Convert index to datetime
-    test_df = pd.read_csv('data/test.csv', index_col=0, infer_datetime_format=True)
-    test_df.index.name=None # Remove index name to remove confusing datetime column
-    test_df.index = pd.to_datetime(test_df.index) # Convert index to datetime
-
-
 # Define some time based variables
 def eda_transform(df):
     df['hour'] = df.index.hour
@@ -38,7 +28,7 @@ def eda_transform(df):
     df['year'] = df.index.year
     df['atempsq'] = df['atemp']**2
     df['tempsq'] = df['temp']**2
-    temp_df = df
+    temp_df = df.copy()
     temp_df['temp'] = ('0' + df['month'].astype(str))
     df['year_month']=df.year.astype(str) + temp_df.temp.str[-2:]
     return df
@@ -152,43 +142,49 @@ def param_tuning_graphs(train_data,dev_data,train_label,pipeline,parameter,param
     plt.show()
     return rmse_list
 
-def praram_tuning_graphs_abbrev(parameter):
+def param_tuning_graphs_abbrev_casual():
     #These lists are the resulting RMSEs from the parameter tuning grid searches above. We have saved permanent lists to avoid needing to run through a length grid search to produce the desired parameter tuning graphs.
     param_tuning_rmse_list_n_estimators = [0.216,0.216,0.216,0.215,0.215,0.215,0.215,0.215,0.216,0.216,0.216,0.216,0.216,0.216,0.216]
     param_tuning_rmse_list_learning_rate = [0.286, 0.228, 0.216, 0.214, 0.215, 0.216, 0.217, 0.219, 0.217, 0.219, 0.218, 0.217, 0.223, 0.23, 0.232]
     param_tuning_rmse_list_max_depth = [0.299,0.252,0.231,0.22,0.214,0.213,0.212,0.213,0.214,0.216,0.216,0.217,0.217,0.217,0.216,0.218,0.218,0.219,0.217,0.217]
     param_tuning_rmse_list_min_samples_leaf = [0.228, 0.224, 0.219, 0.215, 0.216, 0.214, 0.214, 0.214]
 
-    
-    if parameter == 'n_estimators':
-        param_values=[70,75,80,85,90,95,100,105,110,115,120,125,130,135,140]
-        plt.plot(param_values, param_tuning_rmse_list_n_estimators)
-        plt.title('RMSE vs. n_estimators')
-        plt.xlabel('n_estimators')
-        plt.ylabel('RMSE')
-        plt.show()    
-    if parameter == 'learning_rate':
-        param_values=[.01,.02,.03,.04,.045,.05,.055,.06,.07,.08,.09,.1,.2,.3,.4]
-        plt.plot(param_values, param_tuning_rmse_list_learning_rate)
-        plt.title('RMSE vs. learning_rate')
-        plt.xlabel('learning_rate')
-        plt.ylabel('RMSE')
-        plt.show()
-    if parameter == 'max_depth': 
-        param_values=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-        plt.plot(param_values, param_tuning_rmse_list_max_depth)
-        plt.title('RMSE vs. max_depth')
-        plt.xlabel('max_depth')
-        plt.ylabel('RMSE')
-        plt.show()
-    if parameter == 'min_samples_leaf': 
-        param_values=[1,5,10,15,20,25,30,35]
-        plt.plot(param_values, param_tuning_rmse_list_min_samples_leaf)
-        plt.title('RMSE vs. min_samples_leaf')
-        plt.xlabel('min_samples_leaf')
-        plt.ylabel('RMSE')
-        plt.show() 
-    
+    plt.figure(figsize=(15, 8))
+    plt.suptitle('Parameter Tuning Gradient Boost for Casual Rides', fontsize=14, fontweight='bold')
+
+    param_values=[70,75,80,85,90,95,100,105,110,115,120,125,130,135,140]
+    plt.subplot(221)
+    plt.plot(param_values, param_tuning_rmse_list_n_estimators)
+    plt.xlim(68,142)
+    plt.ylim(.2144,.2165)
+    plt.xlabel('n_estimators')
+    plt.ylabel('RMSE')
+
+    param_values=[.01,.02,.03,.04,.045,.05,.055,.06,.07,.08,.09,.1,.2,.3,.4]
+    plt.subplot(222)
+    plt.plot(param_values, param_tuning_rmse_list_learning_rate)
+    plt.xlim(0,.41)
+    plt.ylim(.21,.29)
+    plt.xlabel('learning_rate')
+    plt.ylabel('RMSE')
+
+    param_values=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+    plt.subplot(223)
+    plt.plot(param_values, param_tuning_rmse_list_max_depth)
+    plt.xlim(0,21)
+    plt.ylim(.205,.305)
+    plt.xlabel('max_depth')
+    plt.ylabel('RMSE')
+
+    param_values=[1,5,10,15,20,25,30,35]
+    plt.subplot(224)
+    plt.plot(param_values, param_tuning_rmse_list_min_samples_leaf)
+    plt.xlim(0,36)
+    plt.ylim(.213,.23)
+    plt.xlabel('min_samples_leaf')
+    plt.ylabel('RMSE')
+
+    plt.show() 
 
     
 def train_dev_model_search(pipeline, train_data, dev_data, train_label, parameters, RMSE_scorer):
@@ -214,9 +210,3 @@ def get_RMSE(actual_values, predicted_values):
     n = len(actual_values)
     RMSE = np.sqrt(np.sum(((np.log(predicted_values + 1) - np.log(actual_values + 1)) ** 2) / n))
     return RMSE
-
-
-#### I THINK WE CAN LEAVE THE BELOW IN THE NOTEBOOK
-# RMSE_scorer = make_scorer(get_RMSE, greater_is_better = False)
-
-

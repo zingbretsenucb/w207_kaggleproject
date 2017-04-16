@@ -19,6 +19,8 @@ class PipelineEstimator(BaseEstimator, TransformerMixin):
     def transform(self, X, y = None):
         return X
 
+
+
 class Duplicate(PipelineEstimator):
     def __init__(self, cols, suffix = "_2"):
         self.cols = cols
@@ -62,11 +64,71 @@ class ProcessNumerical(PipelineEstimator):
         return X
 
 
+class RollingWindow(PipelineEstimator):
+    def __init__(self, cols = (), window = 6, style = 'mean', shift = True):
+        self.cols = cols
+        self.window = window
+        self.style = style
+        self.shift = shift
+        self.shift_val = 1 if window > 0 else -1
+        
+    def transform(self, X, y = None):
+        if self.window == 0:
+            return X
+        for col in self.cols:
+            if self.shift:
+                rolling = X[col].shift(self.shift_val)
+            else:
+                rolling = X[col]
+
+            rolling = rolling.rolling(self.window)
+
+            if self.style == 'mean':
+                rolling = rolling.mean()
+            elif self.style == 'sum':
+                rolling = rolling.sum()
+
+            X["{}_roll_{}".format(col, self.window)] = rolling.fillna(1)
+        return X
+
+
+    # def get_params(self, deep = True):
+    #     return {'window': self.window}
+
+
+    # def set_params(self, **parameters):
+    #     for parameter, value in parameters.items():
+    #         setattr(self, parameter, value)
+    #     return self
+
+
+class WeatherForecast(PipelineEstimator):
+    def __init__(self, use = True):
+        self.use = use
+        
+        
+    def transform(self, X, y = None):
+        if not self.use:
+            return X
+
+        # X = X.copy()
+        X['weather_was_better'] = X['weather'].shift() - X['weather']
+        X['weather_getting_better'] = X['weather'].shift(-1) - X['weather']
+        X[['weather_was_better', 'weather_getting_better']] = X[['weather_was_better', 'weather_getting_better']].fillna(0)
+        return X
+
+
 class DateFormatter(PipelineEstimator):
     """Parse datetime into its component parts"""
 
     def __init__(self):
-        pass
+        self.earliest_date = None
+
+
+    def fit(self, X, y = None):
+        self.earliest_date = np.min(X.index.date)
+        return self
+        
 
 
     def transform(self, X, y = None):
@@ -81,6 +143,9 @@ class DateFormatter(PipelineEstimator):
         X['year'] = X.index.year
         X['dom'] = X.index.day
         X['weekend'] = np.where(X['weekday']>5, 1, 0)
+
+        # X['days_since_start'] = X.index.date - self.earliest_date
+        # X['days_since_start'] = X['days_since_start'].apply(lambda x: x.days)
 
         return X
 

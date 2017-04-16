@@ -6,7 +6,6 @@ Repo structure:
 * data - Contains train and test csv files and and prediction results
 * documents - Written documents
 * experiments - Individual team member work
-* kaggle - Feature engineering library
 * code - code referenced by master notebook
 
 Bikeshare.ipynb contains the final report

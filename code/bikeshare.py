@@ -80,6 +80,8 @@ def define_pipeline():
                 ('date', fe.DateFormatter()),
                 #('drop_datetime', fe.SelectCols(cols = ('datetime'), invert = True)),
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
+                ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
+                ('forecast', fe.WeatherForecast()),
                 # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
                 # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
                 ('scale', StandardScaler()),    

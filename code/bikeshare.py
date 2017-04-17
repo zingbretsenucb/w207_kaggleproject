@@ -78,7 +78,9 @@ def define_pipeline():
             ('numerical', Pipeline([
                 ('select_num', fe.SelectCols(cols = numerical)),
                 ('date', fe.DateFormatter()),
-                #('drop_datetime', fe.SelectCols(cols = ('datetime'), invert = True)),
+                ('daily_max', fe.DailyGroup(func = np.max, cols = ['weather'], rsuffix = '_dailymax')),
+                ('daily_mean', fe.DailyGroup(func = np.mean, cols = ['temp'], rsuffix = '_dailymean')),
+                ('drop_datetime', fe.SelectCols(cols = ('datetime', 'month'), invert = True)),
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
                 ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
                 ('forecast', fe.WeatherForecast()),

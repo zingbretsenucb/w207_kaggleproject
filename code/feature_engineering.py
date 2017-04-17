@@ -102,6 +102,31 @@ class RollingWindow(PipelineEstimator):
     #     return self
 
 
+class DailyGroup(PipelineEstimator):
+    def __init__(self, func = np.mean, cols = None, rsuffix = '_dailyavg'):
+        self.func = func
+        self.cols = cols
+        self.rsuffix = rsuffix
+
+
+    def group(self, X):
+        return X.groupby('date').apply(self.func)
+
+
+    def transform(self, X, y = None):
+        if self.cols is None:
+            return X
+
+        X['date'] = X.index.date
+        grouped = self.group(X[['date'] + self.cols])
+        X = X.join(grouped, on = 'date', how = 'left', rsuffix = self.rsuffix)
+        try: 
+            X = X.drop('date', axis = 1)
+            X = X.drop('date' + self.rsuffix, axis = 1)
+        finally:
+            return X
+
+
 class WeatherForecast(PipelineEstimator):
     def __init__(self, use = True):
         self.use = use
@@ -138,7 +163,7 @@ class DateFormatter(PipelineEstimator):
         #X['weekday name'] = X.index.weekday_name
         X['weekday'] = X.index.weekday
         X['weekofyear'] = X.index.weekofyear
-        #X['month'] = X.index.month
+        X['month'] = X.index.month
         X['quarter'] = X.index.quarter
         X['year'] = X.index.year
         X['dom'] = X.index.day

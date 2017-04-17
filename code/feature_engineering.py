@@ -92,16 +92,6 @@ class RollingWindow(PipelineEstimator):
         return X
 
 
-    # def get_params(self, deep = True):
-    #     return {'window': self.window}
-
-
-    # def set_params(self, **parameters):
-    #     for parameter, value in parameters.items():
-    #         setattr(self, parameter, value)
-    #     return self
-
-
 class DailyGroup(PipelineEstimator):
     def __init__(self, func = np.mean, cols = None, rsuffix = '_dailyavg'):
         self.func = func

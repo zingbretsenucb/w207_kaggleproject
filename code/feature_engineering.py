@@ -39,9 +39,10 @@ class Square(PipelineEstimator):
 
 class ProcessNumerical(PipelineEstimator):
 
-    def __init__(self, cols_to_square = (), cols_to_log = ()):
+    def __init__(self, cols_to_square = (), cols_to_log = (), cols_to_sqrt = ()):
         self.cols_to_square = cols_to_square
         self.cols_to_log = cols_to_log
+        self.cols_to_sqrt = cols_to_sqrt
 
 
     def square(self, X):
@@ -56,10 +57,16 @@ class ProcessNumerical(PipelineEstimator):
         return X
 
 
+    def sqrt(self, X):
+        for col in self.cols_to_sqrt:
+            X[col + '_sqrt'] = np.sqrt(X[col])
+        return X
+
     def transform(self, X, y = None):
-        """Square or log given numerical columns"""
+        """Square or sqrt given numerical columns"""
         X = self.square(X)
         X = self.log(X)
+        X = self.sqrt(X)
 
         return X
 
@@ -249,12 +256,12 @@ class PassFilter(PipelineEstimator):
 
             elif self.replacement_style == 'med':
                 med = np.nanmedian(
-                    np.where(X[self.col] < self.lb, X[self.col], np.nan))
+                    np.where(X[self.col] > self.lb, X[self.col], np.nan))
                 self.lb_replacement = med
 
             elif self.replacement_style == 'mean':
                 mean = np.nanmean(
-                    np.where(X[self.col] < self.lb, X[self.col], np.nan))
+                    np.where(X[self.col] > self.lb, X[self.col], np.nan))
                 self.lb_replacement = mean
 
             else:
@@ -298,3 +305,27 @@ class PassFilter(PipelineEstimator):
         
         
         
+
+class RegWrapper(PipelineEstimator):
+    def __init__(self, clf, y, func = None):
+        self.clf = clf
+        self.y = y
+        self.func = func
+
+    
+    def fit(self, X, y = None):
+        print(len(X))
+        print(len(y))
+        print(len(self.y))
+        self.clf.fit(X, self.y)
+        return self
+
+
+    def transform(self, X, y = None):
+        print(len(X))
+        print(len(y))
+        preds = self.clf.predict(X)
+        if self.func is not None:
+            return self.func(preds)
+        else:
+            return preds

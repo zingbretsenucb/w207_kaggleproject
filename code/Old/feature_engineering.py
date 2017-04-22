@@ -139,20 +139,7 @@ class WeatherForecast(PipelineEstimator):
         X[['weather_was_better', 'weather_getting_better']] = X[['weather_was_better', 'weather_getting_better']].fillna(0)
         return X
 
-class WindspeedAdjustment(PipelineEstimator):
-    def __init__(self, use = True):
-        self.use = use
-        
-    def transform(self, X, y = None):
-        if not self.use:
-            return X
-        
-        X['windspeed'] = X['windspeed'].where(X['windspeed'] > 1, np.nan)
-        X['windspeed'] = X['windspeed'].ffill().bfill()
-        return X
-        
-        
-        
+
 class DateFormatter(PipelineEstimator):
     """Parse datetime into its component parts"""
 
@@ -342,17 +329,3 @@ class RegWrapper(PipelineEstimator):
             return self.func(preds)
         else:
             return preds
-
-
-class FillData(PipelineEstimator):
-    def __init__(self, cols = (), threshold = 1):
-        self.cols = cols
-        self.threshold = threshold
-        
-
-    def transform(self, X, y = None):
-        for col in self.cols:
-            X[col] = X[col].where(X[col] > self.threshold, np.nan).ffill().bfill()
-        return X
-
-        

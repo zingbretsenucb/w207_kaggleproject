@@ -3,7 +3,10 @@
 
 ### Place to hide functions referenced in notebook ###
 
+import os
 import numpy as np
+import pandas as pd
+from pprint import pprint
 from time import time
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer
@@ -15,6 +18,16 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor
 import feature_engineering as fe
+
+
+def load_bike_data(data_dir = 'data'):
+    train_df = pd.read_csv(os.path.join(data_dir, 'train.csv'), index_col=0, infer_datetime_format=True)
+    train_df.index.name=None # Remove index name to remove confusing datetime column
+    train_df.index = pd.to_datetime(train_df.index) # Convert index to datetime
+    test_df = pd.read_csv(os.path.join(data_dir, 'test.csv'), index_col=0, infer_datetime_format=True)
+    test_df.index.name=None # Remove index name to remove confusing datetime column
+    test_df.index = pd.to_datetime(test_df.index) # Convert index to datetime
+    return train_df, test_df
 
 
 # Define some time based variables
@@ -83,8 +96,6 @@ def define_pipeline():
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
                 ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
                 ('forecast', fe.WeatherForecast()),
-                # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
-                # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
                 ('scale', StandardScaler()),    
             ])),    
         ])),
@@ -92,6 +103,23 @@ def define_pipeline():
         ('clf', GradientBoostingRegressor(n_estimators=100,random_state=2)),
     ])
     return pipeline
+
+
+def pretty_print(pipeline):
+    # Ugly code to pretty print our pipeline
+    for u, fu in pipeline.steps:
+        print(u)
+        try:
+            for x, y in fu.transformer_list:
+                print('  '+x)
+                for z, zz in y.steps:
+                    print('    '+z)
+                    print('    '+str(zz))
+                    print('')
+        except:
+            print('  '+str(fu))
+            print('')
+
 
 def param_tuning_graphs(train_data,dev_data,train_label,pipeline,parameter,param_values):
 
@@ -213,3 +241,10 @@ def get_RMSE(actual_values, predicted_values):
     n = len(actual_values)
     RMSE = np.sqrt(np.sum(((np.log(predicted_values + 1) - np.log(actual_values + 1)) ** 2) / n))
     return RMSE
+
+
+def save_predictions(test_df, casual, registered, fname = 'data/combined_preds.csv'):
+    test_df['count'] = (np.array([casual>0]*casual)).T + (np.array([registered>0]*registered)).T
+    test_df.index.names = ['datetime']
+    test_df[['count']].to_csv(fname)
+    return 'Saved to: {}'.format(fname)

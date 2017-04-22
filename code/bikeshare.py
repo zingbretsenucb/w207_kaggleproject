@@ -79,6 +79,7 @@ def define_pipeline():
                 ('select_num', fe.SelectCols(cols = numerical)),
                 ('date', fe.DateFormatter()),
                 ('drop_datetime', fe.SelectCols(cols = ('datetime', 'month'), invert = True)),
+                ('fix_bad_vals', fe.FillData(cols = ('windspeed', 'humidity'), threshold = 1)),
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
                 ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
                 ('forecast', fe.WeatherForecast()),

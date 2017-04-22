@@ -329,3 +329,17 @@ class RegWrapper(PipelineEstimator):
             return self.func(preds)
         else:
             return preds
+
+
+class FillData(PipelineEstimator):
+    def __init__(self, cols = (), threshold = 1):
+        self.cols = cols
+        self.threshold = threshold
+        
+
+    def transform(self, X, y = None):
+        for col in self.cols:
+            X[col] = X[col].where(X[col] > self.threshold, np.nan).ffill().bfill()
+        return X
+
+        

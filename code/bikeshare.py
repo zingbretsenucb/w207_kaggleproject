@@ -18,7 +18,6 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor
 import feature_engineering as fe
-reload(fe)
 
 
 def load_bike_data(data_dir = 'data'):

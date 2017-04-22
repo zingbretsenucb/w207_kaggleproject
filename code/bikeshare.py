@@ -83,7 +83,6 @@ def define_pipeline():
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
                 ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
                 ('forecast', fe.WeatherForecast()),
-                ('windspeedadjustment', fe.WindspeedAdjustment()),
                 # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
                 # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
                 ('scale', StandardScaler()),    

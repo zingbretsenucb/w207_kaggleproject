@@ -14,7 +14,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
 from sklearn import preprocessing
 from sklearn.ensemble import GradientBoostingRegressor
-import feature_engineering_windspeed_correction as fe
+import feature_engineering as fe
 
 
 # Define some time based variables
@@ -82,7 +82,6 @@ def define_pipeline():
                 ('temp', fe.ProcessNumerical(cols_to_square = ('temp', 'atemp', 'humidity'),)),
                 ('rollingweather', fe.RollingWindow(cols = ('weather', ))),
                 ('forecast', fe.WeatherForecast()),
-                ('windspeedadjustment', fe.WindspeedAdjustment()),
                 # ('bad_weather', fe.BinarySplitter(col = 'weather', threshold = 2)),
                 # ('filter', fe.PassFilter(col='atemp', lb = 15, replacement_style = 'mean'))
                 ('scale', StandardScaler()),    

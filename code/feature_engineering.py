@@ -152,7 +152,6 @@ class DateFormatter(PipelineEstimator):
         return self
         
 
-
     def transform(self, X, y = None):
         """Split the datetime into its component parts."""
 
@@ -161,10 +160,10 @@ class DateFormatter(PipelineEstimator):
         X['weekday'] = X.index.weekday
         X['weekofyear'] = X.index.weekofyear
         X['month'] = X.index.month
-        X['quarter'] = X.index.quarter
+        # X['quarter'] = X.index.quarter
         X['year'] = X.index.year
         X['dom'] = X.index.day
-        X['weekend'] = np.where(X['weekday']>5, 1, 0)
+        # X['weekend'] = np.where(X['weekday']>5, 1, 0)
 
         # X['days_since_start'] = X.index.date - self.earliest_date
         # X['days_since_start'] = X['days_since_start'].apply(lambda x: x.days)

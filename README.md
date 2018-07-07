@@ -8,4 +8,4 @@ Repo structure:
 * experiments - Individual team member work
 * code - code referenced by master notebook
 
-Bikeshare.ipynb contains the final report
+[Bikeshare.ipynb](https://github.com/zingbretsenucb/w207_kaggleproject/blob/master/Bikeshare.ipynb) contains the final report
